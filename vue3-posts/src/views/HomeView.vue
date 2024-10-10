@@ -15,7 +15,9 @@ import { useRouter } from 'vue-router';
 // useRouter를 이용해 router 객체를 가져와 사용할 수 있음
 const router = useRouter();
 const goAboutPage = () => {
-	router.push('/about');
+	router.push({
+		name: 'About',
+	});
 };
 </script>
 

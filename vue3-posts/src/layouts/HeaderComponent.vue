@@ -27,26 +27,32 @@
 								>About</RouterLink
 							>
 						</li>
+						<li class="nav-item">
+							<RouterLink class="nav-link" active-class="active" to="/posts"
+								>Post</RouterLink
+							>
+						</li>
 					</ul>
-					<form class="d-flex" role="search">
-						<input
-							class="form-control me-2"
-							type="search"
-							placeholder="Search"
-							aria-label="Search"
-						/>
-						<button class="btn btn-outline-success" type="submit">
-							Search
+					<div class="d-flex">
+						<button class="btn btn-outline-light" type="button" @click="goPage">
+							글쓰기
 						</button>
-					</form>
+					</div>
 				</div>
 			</div>
 		</nav>
 	</header>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const goPage = () => {
+	router.push({
+		name: 'PostCreate',
+	});
+};
 </script>
 
 <style lang="scss" scoped></style>

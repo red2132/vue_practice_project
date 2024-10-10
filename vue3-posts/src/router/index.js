@@ -37,6 +37,9 @@ const routes = [
 		path: '/posts/:id',
 		component: PostDetailView,
 		name: 'PostDetail',
+		// props: true,
+		// boolean값 말고도 함수로도 props 값 전달 가능
+		props: route => ({ id: parseInt(route.params.id) }),
 	},
 	{
 		path: '/posts/:id/edit',

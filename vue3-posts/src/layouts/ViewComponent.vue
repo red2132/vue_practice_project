@@ -1,6 +1,6 @@
 <template>
 	<main>
-		<div class="container">
+		<div class="container py-4">
 			<RouterView />
 		</div>
 	</main>

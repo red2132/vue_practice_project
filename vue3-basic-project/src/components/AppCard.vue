@@ -1,23 +1,59 @@
 <template>
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
+		<span class="badge bg-secondary">{{ typeName }}</span>
+    <h5 class="card-title mt-2">{{ title }}</h5>
+    <p class="card-text">{{ contents }}</p>
+    <a href="#" :class="isLikeClass" @click="toggleLike">좋아요</a>
   </div>
 </div>
 </template>
 
 <script>
-import { computed } from '@vue/reactivity';
-import { ref } from 'vue';
+import { computed } from 'vue';
 
 export default {
-	setup(props, { slots }) {
-		const childMessage = ref('자식 컴포넌트 메시지');
-		// context.slots
-		const hasFooter = computed(() => !!slots.footer);
-		return { childMessage, hasFooter };
+	props: {
+		type: {
+			type: String,
+			default: 'news',
+			validator: value => {
+				// 해당 값이 맞는지 확인
+				return ['news', 'notice'].includes(value);
+			}
+		},
+		title: {
+			type: String,
+			required: true,
+		},
+		contents: {
+			type: String,
+			required: true,
+		},
+		isLike: {
+			type: Boolean,
+			default: false
+		}
+	},
+	emits: ['toggleLike'],
+
+	setup(props, context) {
+		const isLikeClass = computed(() => 
+			props.isLike ? 'btn btn-danger' :'btn btn-outline-danger'
+		)
+		const typeName = computed(() => 
+			props.type === 'news'? '뉴스':'공지사항'
+		)
+		const toggleLike = () => {
+			//props.isLike = !props.isLike;
+			context.emit('toggleLike'); // 상위 컴포넌트로 이벤트 전송
+		}
+		
+		return { 
+			isLikeClass,
+			typeName,
+			toggleLike
+		};
 	},
 };
 </script>

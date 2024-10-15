@@ -6,12 +6,20 @@
 		<button class="btn btn-primary" @click="goAboutPage">
 			about 페이지로 이동
 		</button>
+		<hr class="my-4" />
+		<AppGrid :items="items" v-slot="{ item }">
+			<AppCard>{{ item }}</AppCard>
+		</AppGrid>
 	</div>
 </template>
 
 <script setup>
+import AppCard from '@/components/app/AppCard.vue';
+import AppGrid from '@/components/app/AppGrid.vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+const items = ref(['사과', '딸기', '포도', '바나나']);
 // useRouter를 이용해 router 객체를 가져와 사용할 수 있음
 const router = useRouter();
 const goAboutPage = () => {

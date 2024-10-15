@@ -3,26 +3,12 @@
 		<h2>게시글 등록</h2>
 		<hr class="my-4" />
 		<!-- @submit.prevent: 새로 실행되지 않게(새로고침 or 새로 창) 하기 위해 -->
-		<form @submit.prevent="save">
-			<div class="mb-3">
-				<label for="exampleFormControlInput1" class="form-label">제목</label>
-				<input
-					type="text"
-					class="form-control"
-					id="title"
-					v-model="post.title"
-				/>
-			</div>
-			<div class="mb-3">
-				<label for="content" class="form-label">내용</label>
-				<textarea
-					class="form-control"
-					id="content"
-					rows="3"
-					v-model="post.content"
-				></textarea>
-			</div>
-			<div class="pt-4">
+		<PostForm
+			@submit.prevent="save"
+			v-model:title="post.title"
+			v-model:content="post.content"
+		>
+			<template #actions>
 				<button
 					type="button"
 					class="btn btn-outline-dark me-2"
@@ -31,13 +17,14 @@
 					목록
 				</button>
 				<button class="btn btn-primary">저장</button>
-			</div>
-		</form>
+			</template>
+		</PostForm>
 	</div>
 </template>
 
 <script setup>
 import { createPost } from '@/api/posts';
+import PostForm from '@/components/Posts/PostForm.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 

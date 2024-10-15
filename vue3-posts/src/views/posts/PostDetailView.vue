@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<h2>{{ form.title }}</h2>
+		<h2>{{ post.title }}</h2>
 		<p>id: {{ props.id }}</p>
-		<p>{{ form.content }}</p>
+		<p>{{ post.content }}</p>
 		<hr class="my-4" />
 		<div class="row g-2">
 			<div class="col-auto">
@@ -21,33 +21,51 @@
 				</button>
 			</div>
 			<div class="col-auto">
-				<button class="btn btn-outline-danger">삭제</button>
+				<button class="btn btn-outline-danger" @click="removePost">삭제</button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { getPostById } from '@/api/posts';
+import { deletePost, getPostById } from '@/api/posts';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({
 	id: Number,
 });
-const form = ref({});
+const router = useRouter();
+const post = ref({});
 
-const fetchPost = () => {
-	const data = getPostById(props.id);
-	form.value = { ...data }; // 전개 구문을 이용한 복사
+const fetchPost = async () => {
+	const { data } = await getPostById(props.id);
+	setPost(data);
+};
+
+const setPost = ({ title, content, createdAt }) => {
+	post.value.title = title;
+	post.value.content = content;
+	post.value.createdAt = createdAt;
 };
 
 fetchPost();
-const router = useRouter();
 
 const goListPage = () => router.push({ name: 'PostList' });
 const goEditPage = () =>
 	router.push({ name: 'PostEdit', params: { id: props.id } });
+
+const removePost = () => {
+	try {
+		if (confirm('삭제하시겠습니까') === false) {
+			return;
+		}
+		deletePost(props.id);
+		goListPage();
+	} catch (error) {
+		console.error(error);
+	}
+};
 </script>
 
 <style lang="scss" scoped></style>

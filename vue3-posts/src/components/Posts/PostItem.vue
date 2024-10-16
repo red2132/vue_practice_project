@@ -4,8 +4,16 @@
 		<p class="card-text">
 			{{ content }}
 		</p>
-		<p class="text-muted">{{ createdAt }}</p></AppCard
-	>
+		<p class="text-muted">{{ createdAt }}</p>
+		<template #footer>
+			<div class="d-flex flex-row-reverse">
+				<!--.stop으로 이벤트 전파 방지-->
+				<button class="btn p-0" @click.stop="$emit('modal')">
+					<i class="bi bi-chat"></i>
+				</button>
+			</div>
+		</template>
+	</AppCard>
 </template>
 
 <script setup>
@@ -23,6 +31,8 @@ defineProps({
 		type: [String, Date, Number],
 	},
 });
+
+defineEmits(['modal']);
 </script>
 
 <style lang="scss" scoped></style>

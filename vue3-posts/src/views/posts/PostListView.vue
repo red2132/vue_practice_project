@@ -14,6 +14,7 @@
 					:content="item.content"
 					:created-at="item.createdAt"
 					@click="goDetailPage(item.id)"
+					@modal="openModal(item)"
 				/>
 			</template>
 		</AppGrid>
@@ -23,6 +24,14 @@
 			@page="page => (params._page = page)"
 		/>
 	</div>
+	<Teleport to="#modal">
+		<PostModal
+			v-model="show"
+			:title="modalTitle"
+			:content="modalContent"
+			:created-at="modalCreatedAt"
+		/>
+	</Teleport>
 </template>
 
 <script setup>
@@ -34,6 +43,7 @@ import { computed } from 'vue';
 import AppPagination from '@/components/app/AppPagination.vue';
 import AppGrid from '@/components/app/AppGrid.vue';
 import PostFilter from './PostFilter.vue';
+import PostModal from '@/components/Posts/PostModal.vue';
 
 const posts = ref([]);
 const router = useRouter();
@@ -73,6 +83,19 @@ const goDetailPage = id => {
 };
 
 fetchPosts();
+
+//modal
+const modalTitle = ref('');
+const modalContent = ref('');
+const modalCreatedAt = ref('');
+const show = ref(false);
+
+const openModal = ({ title, content, createdAt }) => {
+	show.value = true;
+	modalTitle.value = title;
+	modalContent.value = content;
+	modalCreatedAt.value = createdAt;
+};
 </script>
 
 <style lang="scss" scoped></style>

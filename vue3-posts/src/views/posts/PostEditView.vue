@@ -18,7 +18,8 @@
 				<button class="btn btn-primary">수정</button>
 			</template>
 		</PostForm>
-		<AppAlert :show="showAlert" :message="alertMessage" :type="alertType" />
+		<!-- <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" /> -->
+		<AppAlert :items="alerts" />
 	</div>
 </template>
 <script setup>
@@ -57,8 +58,7 @@ const save = () => {
 		//router.push({ name: 'PostList' });
 		vAlert('수정이 완료되었습니다!', 'success');
 	} catch (error) {
-		console.error(error);
-		vAlert('네트워크 오류');
+		vAlert(error.message);
 	}
 };
 
@@ -71,16 +71,12 @@ const setPost = ({ title, content, createdAt }) => {
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } });
 
 //alert 관련
-const showAlert = ref(false);
-const alertMessage = ref('');
-const alertType = ref('error');
+const alerts = ref([]);
 
 const vAlert = (message, type = 'error') => {
-	showAlert.value = true;
-	alertMessage.value = message;
-	alertType.value = type;
+	alerts.value.push({ message, type });
 	setTimeout(() => {
-		showAlert.value = false;
+		alerts.value.shift();
 	}, 2000);
 };
 </script>

@@ -4,7 +4,9 @@
 		<p class="card-text">
 			{{ content }}
 		</p>
-		<p class="text-muted">{{ createdAt }}</p>
+		<p class="text-muted">
+			{{ createDate }}
+		</p>
 		<template #footer>
 			<div class="d-flex flex-row-reverse">
 				<!--.stop으로 이벤트 전파 방지-->
@@ -17,9 +19,10 @@
 </template>
 
 <script setup>
+import { computed, inject } from 'vue';
 import AppCard from '../app/AppCard.vue';
 
-defineProps({
+const props = defineProps({
 	title: {
 		type: String,
 		required: true,
@@ -31,7 +34,10 @@ defineProps({
 		type: [String, Date, Number],
 	},
 });
-
+const dayFormat = inject('dayjs');
+const createDate = computed(() =>
+	dayFormat(props.createdAt).format('YYYY. MM. DD HH:mm:ss'),
+);
 defineEmits(['modal']);
 </script>
 

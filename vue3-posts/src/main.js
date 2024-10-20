@@ -10,6 +10,7 @@ import person from './plugins/person';
 import objPlugins from './plugins/obj';
 import funcPlugins from './plugins/func';
 import globalDirectives from './plugins/global-directives';
+import day from './plugins/day';
 
 // use()를 이용해 하위 자식 컴포넌트는 router 객체 사용 가능
 // 또한 해당 router 객체는 페이지 이동, 현재 활성 라우트 정보에 접근하는데 사용할 수 있음
@@ -19,5 +20,6 @@ app.use(objPlugins, { name: 'happy' });
 app.use(funcPlugins);
 app.use(globalDirectives);
 app.use(globalComponents);
+app.use(day);
 app.use(router);
 app.mount('#app');

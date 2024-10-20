@@ -3,6 +3,9 @@
 		<h2>{{ post.title }}</h2>
 		<p>id: {{ props.id }}</p>
 		<p>{{ post.content }}</p>
+		<p class="text-muted">
+			{{ $dayjs(post.createdAt).format('YYYY. MM. DD HH:mm:ss') }}
+		</p>
 		<hr class="my-4" />
 		<div class="row g-2">
 			<div class="col-auto">

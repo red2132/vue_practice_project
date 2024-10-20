@@ -24,7 +24,6 @@
 </template>
 <script setup>
 import { getPostById, updatePost } from '@/api/posts';
-import AppAlert from '@/components/app/AppAlert.vue';
 import PostForm from '@/components/Posts/PostForm.vue';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

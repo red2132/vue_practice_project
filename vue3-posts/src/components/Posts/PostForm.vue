@@ -3,6 +3,8 @@
 		<div class="mb-3">
 			<label for="exampleFormControlInput1" class="form-label">제목</label>
 			<input
+				v-focus
+				v-color="'blue'"
 				id="title"
 				class="form-control"
 				type="text"

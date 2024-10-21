@@ -7,22 +7,26 @@
 			v-model:limit="params._limit"
 		/>
 		<hr class="my-4" />
-		<AppGrid :items="posts">
-			<template v-slot="{ item }">
-				<PostItem
-					:title="item.title"
-					:content="item.content"
-					:created-at="item.createdAt"
-					@click="goDetailPage(item.id)"
-					@modal="openModal(item)"
-				/>
-			</template>
-		</AppGrid>
-		<AppPagination
-			:current-page="params._page"
-			:page-count="pageCount"
-			@page="page => (params._page = page)"
-		/>
+		<AppLoading v-if="loading" />
+		<AppError v-else-if="error" :message="error.message" />
+		<template v-else>
+			<AppGrid :items="posts">
+				<template v-slot="{ item }">
+					<PostItem
+						:title="item.title"
+						:content="item.content"
+						:created-at="item.createdAt"
+						@click="goDetailPage(item.id)"
+						@modal="openModal(item)"
+					/>
+				</template>
+			</AppGrid>
+			<AppPagination
+				:current-page="params._page"
+				:page-count="pageCount"
+				@page="page => (params._page = page)"
+			/>
+		</template>
 	</div>
 	<Teleport to="#modal">
 		<PostModal
@@ -42,6 +46,12 @@ import { getPosts } from '@/api/posts';
 import { computed } from 'vue';
 import PostFilter from './PostFilter.vue';
 import PostModal from '@/components/Posts/PostModal.vue';
+import AppLoading from '@/components/app/AppLoading.vue';
+import AppError from '@/components/app/AppError.vue';
+
+// 화면 상태 관리 반응성 변수
+const loading = ref(false);
+const error = ref(null);
 
 const posts = ref([]);
 const router = useRouter();
@@ -59,11 +69,14 @@ const pageCount = computed(() =>
 );
 const fetchPosts = async () => {
 	try {
+		loading.value = true;
 		const { data, headers } = await getPosts(params.value);
 		posts.value = data;
 		totalCount.value = headers['x-total-count'];
-	} catch (error) {
-		console.error(error);
+	} catch (err) {
+		error.value = err;
+	} finally {
+		loading.value = false;
 	}
 };
 

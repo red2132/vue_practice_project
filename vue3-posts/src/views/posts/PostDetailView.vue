@@ -47,66 +47,48 @@
 </template>
 
 <script setup>
-import { deletePost, getPostById } from '@/api/posts';
 import AppError from '@/components/app/AppError.vue';
 import AppLoading from '@/components/app/AppLoading.vue';
-import { ref } from 'vue';
+import { useAlert } from '@/composables/alert';
+import { useAxios } from '@/composables/useAxios';
 import { useRouter } from 'vue-router';
 
-// 화면 상태 관리 반응성 변수
-const loading = ref(false);
-const error = ref(null);
-
+const { vAlert, vSuccess } = useAlert();
 const props = defineProps({
 	id: String,
 });
 const router = useRouter();
-const post = ref({});
-
-// 게시물 정보 가지고 오는 로직
-const fetchPost = async () => {
-	try {
-		loading.value = true;
-		const { data } = await getPostById(props.id);
-		setPost(data);
-	} catch (err) {
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
-};
-
-const setPost = ({ title, content, createdAt }) => {
-	post.value.title = title;
-	post.value.content = content;
-	post.value.createdAt = createdAt;
-};
-
-fetchPost();
+const { error, loading, data: post } = useAxios(`/posts/${props.id}`);
 
 const goListPage = () => router.push({ name: 'PostList' });
 const goEditPage = () =>
 	router.push({ name: 'PostEdit', params: { id: props.id } });
 
-// 게시물 삭제 로직
-// 게시물 수정 상태 변수
-const removeError = ref(null);
-const removeLoading = ref(false);
+const {
+	error: removeError,
+	loading: removeLoading,
+	execute,
+} = useAxios(
+	`/posts/${props.id}`,
+	{ method: 'delete' },
+	{
+		immediate: false,
+		onSuccess: () => {
+			// 수정 후, 해당 화면으로 이동
+			vSuccess('삭제가 완료되었습니다!');
+			goListPage();
+		},
+		onError: err => {
+			vAlert(err.message);
+		},
+	},
+);
 
+// 게시물 삭제 로직
 const removePost = async () => {
-	try {
-		removeLoading.value = true;
-		if (confirm('삭제하시겠습니까') === false) {
-			return;
-		}
-		await deletePost(props.id);
-		goListPage();
-	} catch (err) {
-		removeError.value = err;
-	} finally {
-		removeLoading.value = false;
+	if (confirm('삭제하시겠습니까') === false) {
+		return;
 	}
+	execute();
 };
 </script>
-
-<style lang="scss" scoped></style>

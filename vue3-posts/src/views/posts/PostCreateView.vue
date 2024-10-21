@@ -34,16 +34,12 @@
 </template>
 
 <script setup>
-import { createPost } from '@/api/posts';
 import AppError from '@/components/app/AppError.vue';
 import PostForm from '@/components/Posts/PostForm.vue';
 import { useAlert } from '@/composables/alert';
+import { useAxios } from '@/composables/useAxios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-
-// 화면 상태 관리 반응성 변수
-const loading = ref(false);
-const error = ref(null);
 
 const { vAlert, vSuccess } = useAlert();
 const router = useRouter();
@@ -51,25 +47,25 @@ const post = ref({
 	title: null,
 	content: null,
 });
-
+const { error, loading, execute } = useAxios(
+	'/posts',
+	{
+		method: 'post',
+	},
+	{
+		immediate: false,
+		onSuccess: () => {
+			// 추가 후, list 화면으로 이동
+			router.push({ name: 'PostList' });
+			vSuccess('등록이 완료되었습니다');
+		},
+		onError: err => {
+			vAlert(err.message);
+		},
+	},
+);
 const save = async () => {
-	try {
-		loading.value = true;
-		// 데이터 추가 api 호출
-		await createPost({
-			...post.value,
-			createdAt: Date.now(),
-		});
-
-		// 추가 후, list 화면으로 이동
-		router.push({ name: 'PostList' });
-		vSuccess('등록이 완료되었습니다');
-	} catch (err) {
-		vAlert(err.message);
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
+	execute({ ...post.value, createdAt: Date.now() });
 };
 
 const goListPage = () => router.push({ name: 'PostList' });

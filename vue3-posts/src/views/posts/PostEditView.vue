@@ -7,7 +7,7 @@
 		<AppError v-if="editError" :message="editError.message" />
 		<PostForm
 			v-else
-			@submit.prevent="save"
+			@submit.prevent="edit"
 			v-model:title="post.title"
 			v-model:content="post.content"
 		>
@@ -35,71 +35,43 @@
 	</div>
 </template>
 <script setup>
-import { getPostById, updatePost } from '@/api/posts';
 import AppError from '@/components/app/AppError.vue';
 import AppLoading from '@/components/app/AppLoading.vue';
 import PostForm from '@/components/Posts/PostForm.vue';
 import { useAlert } from '@/composables/alert';
-import { ref } from 'vue';
+import { useAxios } from '@/composables/useAxios';
 import { useRoute, useRouter } from 'vue-router';
-
-// 화면 상태 관리 반응성 변수
-const loading = ref(false);
-const error = ref(null);
 
 const { vAlert, vSuccess } = useAlert();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
-const post = ref({
-	title: null,
-	content: null,
-});
+const { error, loading, data: post } = useAxios(`/posts/${id}`);
 
-// 게시물 정보 가지고 오는 로직
-const fetchPost = async () => {
-	try {
-		loading.value = true;
-		const { data } = await getPostById(id);
-		setPost(data);
-	} catch (err) {
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
-};
+const {
+	error: editError,
+	loading: editLoading,
+	execute,
+} = useAxios(
+	`/posts/${id}`,
+	{ method: 'patch' },
+	{
+		immediate: false,
+		onSuccess: () => {
+			// 수정 후, 해당 화면으로 이동
+			router.push({ name: 'PostDetail', params: { id } });
+			vSuccess('수정이 완료되었습니다!');
+		},
+		onError: err => {
+			vAlert(err.message);
+		},
+	},
+);
 
-fetchPost();
-
-// 게시물 수정 상태 변수
-const editError = ref(null);
-const editLoading = ref(false);
-
-// 게시물 저장 메서드
-const save = async () => {
-	try {
-		editLoading.value = true;
-		// 데이터 수정 api 호출
-		await updatePost(id, {
-			...post.value,
-			createdAt: Date.now(),
-		});
-
-		// 수정 후, 해당 화면으로 이동
-		router.push({ name: 'PostDetail', params: { id } });
-		vSuccess('수정이 완료되었습니다!');
-	} catch (err) {
-		vAlert(err.message);
-		editError.value = err;
-	} finally {
-		editLoading.value = false;
-	}
-};
-
-const setPost = ({ title, content, createdAt }) => {
-	post.value.title = title;
-	post.value.content = content;
-	post.value.createdAt = createdAt;
+const edit = () => {
+	execute({
+		...post.value,
+	});
 };
 
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } });

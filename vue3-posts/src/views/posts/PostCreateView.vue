@@ -26,9 +26,11 @@
 <script setup>
 import { createPost } from '@/api/posts';
 import PostForm from '@/components/Posts/PostForm.vue';
+import { useAlert } from '@/composables/alert';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+const { vSuccess } = useAlert();
 const router = useRouter();
 const post = ref({
 	title: null,
@@ -37,16 +39,15 @@ const post = ref({
 
 const save = () => {
 	try {
-		const data = {
+		// 데이터 추가 api 호출
+		createPost({
 			...post.value,
 			createdAt: Date.now(),
-		};
-
-		// 데이터 추가 api 호출
-		createPost(data);
+		});
 
 		// 추가 후, list 화면으로 이동
-		router.push({ name: 'PostList' });
+		// router.push({ name: 'PostList' });
+		vSuccess('등록이 완료되었습니다');
 	} catch (error) {
 		console.error(error);
 	}

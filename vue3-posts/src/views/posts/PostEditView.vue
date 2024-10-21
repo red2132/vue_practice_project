@@ -19,15 +19,16 @@
 			</template>
 		</PostForm>
 		<!-- <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" /> -->
-		<AppAlert :items="alerts" />
 	</div>
 </template>
 <script setup>
 import { getPostById, updatePost } from '@/api/posts';
 import PostForm from '@/components/Posts/PostForm.vue';
+import { useAlert } from '@/composables/alert';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+const { vAlert, vSuccess } = useAlert();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
@@ -53,9 +54,9 @@ const save = () => {
 		// 데이터 수정 api 호출
 		updatePost(id, data);
 
-		// tnwjd 후, list 화면으로 이동
-		//router.push({ name: 'PostList' });
-		vAlert('수정이 완료되었습니다!', 'success');
+		// 수정 후, 해당 화면으로 이동
+		router.push({ name: 'PostDetail', params: { id } });
+		vSuccess('수정이 완료되었습니다!');
 	} catch (error) {
 		vAlert(error.message);
 	}
@@ -68,16 +69,6 @@ const setPost = ({ title, content, createdAt }) => {
 };
 
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } });
-
-//alert 관련
-const alerts = ref([]);
-
-const vAlert = (message, type = 'error') => {
-	alerts.value.push({ message, type });
-	setTimeout(() => {
-		alerts.value.shift();
-	}, 2000);
-};
 </script>
 
 <style lang="scss" scoped></style>

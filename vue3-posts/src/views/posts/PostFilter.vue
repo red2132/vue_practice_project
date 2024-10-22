@@ -4,7 +4,7 @@
 			<div class="col">
 				<input
 					:value="title"
-					@input="$emit('update:title', $event.target.value)"
+					@input="changeTitle"
 					type="text"
 					class="form-control"
 					placeholder="제목으로 검색해주세요."
@@ -26,11 +26,24 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 defineProps({
 	title: String,
 	limit: [Number, String],
 });
-defineEmits(['update:title', 'update:limit']);
+const emit = defineEmits(['update:title', 'update:limit']);
+const valid = ref(true);
+const changeTitle = e => {
+	if (valid.value === false) {
+		return;
+	}
+	valid.value = false;
+	setTimeout(() => {
+		emit('update:title', e.target.value);
+		valid.value = true;
+	}, 500);
+};
 </script>
 
 <style lang="scss" scoped></style>

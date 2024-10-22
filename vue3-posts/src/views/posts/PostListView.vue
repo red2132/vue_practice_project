@@ -4,13 +4,17 @@
 		<hr class="my-4" />
 		<PostFilter
 			v-model:title="params.title_like"
-			v-model:limit="params._limit"
+			:limit="params._limit"
+			@update:limit="changeLimit"
 		/>
 		<hr class="my-4" />
 		<AppLoading v-if="loading" />
 		<AppError v-else-if="error" :message="error.message" />
+		<template v-else-if="!isExist">
+			<p class="text-center py-5 text-muted">게시물이 없습니다</p>
+		</template>
 		<template v-else>
-			<AppGrid :items="posts">
+			<AppGrid :items="posts" col-class="col-12 col-md-6 col-lg-4">
 				<template v-slot="{ item }">
 					<PostItem
 						:title="item.title"
@@ -77,11 +81,18 @@ const {
 	loading,
 } = useAxios('/posts', { params });
 
+const isExist = computed(() => posts.value && posts.value.length > 0);
+
 //pagination
 const totalCount = computed(() => response.value.headers['x-total-count']);
 const pageCount = computed(() =>
 	Math.ceil(totalCount.value / params.value._limit),
 );
+
+const changeLimit = value => {
+	params.value._limit = value;
+	params.value._page = 1;
+};
 
 const goDetailPage = id => {
 	router.push({

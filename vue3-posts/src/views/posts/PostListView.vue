@@ -18,6 +18,7 @@
 						:created-at="item.createdAt"
 						@click="goDetailPage(item.id)"
 						@modal="openModal(item)"
+						@preview="selectPreview(item.id)"
 					/>
 				</template>
 			</AppGrid>
@@ -36,6 +37,12 @@
 			:created-at="modalCreatedAt"
 		/>
 	</Teleport>
+	<template v-if="previewId">
+		<hr class="my-5" />
+		<AppCard>
+			<PostDetailView :id="previewId"></PostDetailView>
+		</AppCard>
+	</template>
 </template>
 
 <script setup>
@@ -48,8 +55,14 @@ import PostModal from '@/components/Posts/PostModal.vue';
 import AppLoading from '@/components/app/AppLoading.vue';
 import AppError from '@/components/app/AppError.vue';
 import { useAxios } from '@/composables/useAxios';
+import AppCard from '@/components/app/AppCard.vue';
+import PostDetailView from './PostDetailView.vue';
 
 const router = useRouter();
+const previewId = ref(null);
+const selectPreview = id => {
+	previewId.value = id;
+};
 const params = ref({
 	_sort: 'createdAt',
 	_order: 'desc',

@@ -51,6 +51,7 @@ import AppError from '@/components/app/AppError.vue';
 import AppLoading from '@/components/app/AppLoading.vue';
 import { useAlert } from '@/composables/alert';
 import { useAxios } from '@/composables/useAxios';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const { vAlert, vSuccess } = useAlert();
@@ -58,7 +59,8 @@ const props = defineProps({
 	id: String,
 });
 const router = useRouter();
-const { error, loading, data: post } = useAxios(`/posts/${props.id}`);
+const url = computed(() => `/posts/${props.id}`);
+const { error, loading, data: post } = useAxios(url);
 
 const goListPage = () => router.push({ name: 'PostList' });
 const goEditPage = () =>

@@ -14,6 +14,10 @@
 	<hr class="my-4" />
 	<h2>{{ $person.name }}</h2>
 	<button class="btn btn-primary" @click="person.say">click person</button>
+	<hr class="my-4" />
+	<p>{{ position }}</p>
+	<p>x: {{ x }}</p>
+	<p>y: {{ y }}</p>
 </template>
 <script>
 export default {
@@ -25,7 +29,7 @@ export default {
 };
 </script>
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, reactive, ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 
 const items = ref(['사과', '딸기', '포도', '바나나']);
@@ -37,6 +41,13 @@ const goAboutPage = () => {
 	});
 };
 const person = inject('person');
+const position = reactive({
+	x: 100,
+	y: 1000,
+});
+// const x = toRef(position, 'x');
+// const y = toRef(position, 'y');
+const { x, y } = toRefs(position);
 </script>
 
 <style lang="scss" scoped></style>

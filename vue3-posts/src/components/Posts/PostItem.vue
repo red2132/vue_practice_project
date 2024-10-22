@@ -10,8 +10,11 @@
 		<template #footer>
 			<div class="d-flex flex-row-reverse">
 				<!--.stop으로 이벤트 전파 방지-->
-				<button class="btn p-0" @click.stop="$emit('modal')">
+				<button class="btn p-1" @click.stop="$emit('modal')">
 					<i class="bi bi-chat"></i>
+				</button>
+				<button class="btn p-1" @click.stop="$emit('preview')">
+					<i class="bi bi-app"></i>
 				</button>
 			</div>
 		</template>
@@ -38,7 +41,7 @@ const dayFormat = inject('dayjs');
 const createDate = computed(() =>
 	dayFormat(props.createdAt).format('YYYY. MM. DD HH:mm:ss'),
 );
-defineEmits(['modal']);
+defineEmits(['modal', 'preview']);
 </script>
 
 <style lang="scss" scoped></style>
